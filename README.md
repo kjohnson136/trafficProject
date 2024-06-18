@@ -1,3 +1,6 @@
 # trafficProject
-6/16:
-extracting metadata + telemery data from video
+6/17:
+Working through opencv course
+
+6/18:
+Working through opencv course
