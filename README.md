@@ -6,4 +6,4 @@ Working through opencv course
 Working through opencv course
 
 6/21:
-Finishing opencv course
+Finishing opencv course + eTime course
