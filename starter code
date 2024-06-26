@@ -1,0 +1,90 @@
+import cv2
+import numpy as np
+import os
+
+# Load YOLOv4 model and configuration
+net = cv2.dnn.readNet("yolov4.weights", "yolov4.cfg")
+
+# Load object classes from coco.names
+with open("coco.names", "r") as f:
+    classes = [line.strip() for line in f.readlines()]
+
+# Read multiple frames from the video
+cap = cv2.VideoCapture('trim.mp4')
+frames = []
+for _ in range(10):  # Read 10 frames
+    ret, frame = cap.read()
+    if ret:
+        frames.append(frame)
+cap.release()
+
+if not frames:
+    print("Failed to read frames from video")
+    exit()
+
+# Create output directory if it doesn't exist
+output_dir = 'default_yolo4'
+os.makedirs(output_dir, exist_ok=True)
+
+for i, frame in enumerate(frames):
+    print(f"\nProcessing frame {i+1}")
+    print(f"Frame shape: {frame.shape}")
+
+    # Preprocess the frame
+    frame = cv2.convertScaleAbs(frame, alpha=1.2, beta=0)  # Increase contrast
+
+    # Prepare the frame for detection
+    blob = cv2.dnn.blobFromImage(frame, 1/255.0, (416, 416), swapRB=True, crop=False)
+    net.setInput(blob)
+
+    # Get the output layer names
+    layer_names = net.getLayerNames()
+    output_layers = [layer_names[i - 1] for i in net.getUnconnectedOutLayers()]
+
+    # Perform detection
+    detections = net.forward(output_layers)
+
+    # Process detections
+    boxes = []
+    confidences = []
+    class_ids = []
+
+    for detection in detections:
+        for obj in detection:
+            scores = obj[5:]
+            class_id = np.argmax(scores)
+            confidence = scores[class_id]
+            if confidence > 0.05:  # Lower threshold for initial detection
+                center_x = int(obj[0] * frame.shape[1])
+                center_y = int(obj[1] * frame.shape[0])
+                w = int(obj[2] * frame.shape[1])
+                h = int(obj[3] * frame.shape[0])
+                x = int(center_x - w/2)
+                y = int(center_y - h/2)
+                
+                boxes.append([x, y, w, h])
+                confidences.append(float(confidence))
+                class_ids.append(class_id)
+
+    # Apply Non-Maximum Suppression
+    indices = cv2.dnn.NMSBoxes(boxes, confidences, 0.05, 0.4)
+    
+    detection_count = 0
+    for index in indices:
+        index = index[0] if isinstance(index, list) else index  # Compatibility with different OpenCV versions
+        box = boxes[index]
+        x, y, w, h = box
+        label = f"{classes[class_ids[index]]}: {confidences[index]:.2f}"
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        cv2.putText(frame, label, (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        print(f"Detected: {label} at ({x}, {y}, {w}, {h})")
+        detection_count += 1
+
+    print(f"Total detections: {detection_count}")
+
+    # Save the frame as an image file in the specified directory
+    output_filename = os.path.join(output_dir, f"detection_result_{i+1}.jpg")
+    cv2.imwrite(output_filename, frame)
+    print(f"Result saved as {output_filename}")
+
+print("\nProcessing complete. Please check the saved images in the 'default_yolo4' directory.")
