@@ -15,4 +15,4 @@ trying to extract telemetry from drone using srt files.
 working with YOLO to identify objects within images and create bounding boxes. 
 
 6/28: 
-started working on final presentation
+started working on final presentation + comparing YOLO models, looked at arcgis
