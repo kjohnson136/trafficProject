@@ -16,3 +16,6 @@ working with YOLO to identify objects within images and create bounding boxes.
 
 6/28: 
 started working on final presentation + comparing YOLO models, looked at arcgis
+
+7/8:
+created graphs from collected video data, found xcenter + ycenter, cleaned data to get rid of most noise
