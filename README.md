@@ -19,3 +19,6 @@ started working on final presentation + comparing YOLO models, looked at arcgis
 
 7/8:
 created graphs from collected video data, found xcenter + ycenter, cleaned data to get rid of most noise
+
+7/9:
+looked into adding classes + velocity to csv file, mostly worked
