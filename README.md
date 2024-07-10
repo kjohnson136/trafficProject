@@ -22,3 +22,6 @@ created graphs from collected video data, found xcenter + ycenter, cleaned data 
 
 7/9:
 looked into adding classes + velocity to csv file, mostly worked
+
+7/10:
+worked on final presentation + getting different results from data
