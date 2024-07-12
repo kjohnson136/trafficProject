@@ -25,3 +25,6 @@ looked into adding classes + velocity to csv file, mostly worked
 
 7/10:
 worked on final presentation + getting different results from data
+
+7/12:
+worked on final presentation
